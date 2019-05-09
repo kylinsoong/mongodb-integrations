@@ -1,0 +1,38 @@
+= Spring Data MongoDB
+
+== Prepare MongoDB and sample Data
+
+[source, bash]
+.*1. 启动一个三节点复制子集*
+----
+//创建数据库存储文件及内部通信加密文件
+$ mkdir -p ~/tmp/r{0,1,2}
+$ openssl rand -base64 755 > ~/tmp/keyfile
+$ chmod 400 ~/tmp/keyfile
+
+//启动
+$ for i in 0 1 2 ; do mongod --dbpath ~/tmp/r$i --logpath ~/tmp/r$i/mongo.log --port 2700$i --fork --auth --keyFile ~/tmp/keyfile --replSet repl-1 ; done
+
+//初始化
+$ mongo admin --port 27000 --eval "rs.initiate()"
+
+//创建安全登录账户
+$ mongo admin --port 27000 --eval 'db.createUser({user: "root", pwd: "mongo", roles: [{ role:"root", db: "admin" }]})'
+
+//添加备节点
+$ mongo admin --port 27000 -u "root" -p "mongo" --eval 'rs.add("localhost:27001")'
+$ mongo admin --port 27000 -u "root" -p "mongo" --eval 'rs.add("localhost:27002")'
+----
+
+[source, text]
+.*2. 导入数据*
+----
+$ mongoimport --host 'repl-1/localhost:27000,localhost:27001,localhost:27001' -u root -p mongo --authenticationDatabase 'admin' --db china -c cities --file china.json --type json
+----
+
+== Run
+
+Either Run Spring Boot uber jar, or Run Spring Main method will demonstrate:
+
+* Read the exist data from MongoDB collection
+* Write the data to MongoDB Collection
