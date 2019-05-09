@@ -1,0 +1,6 @@
+= Why this project?
+
+MongoDB has already been larged used in insternet scenario, large volume data processing scenario, like IOT, online oversea retail, mobile games, AI,etc, the primary purpose of this projects is to:
+
+* Demonstrate the modernness MongoDB usage pattern, to let the traditional industry to embrace hotest IOT, AI, large volume data processing via MongoDB.
+* Demonstrate how MongoDB be integrated with the exist enterprise stack, to let the MongoDB as a accelerator to the current existed stack.  
