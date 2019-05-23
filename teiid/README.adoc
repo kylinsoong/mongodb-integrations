@@ -1,4 +1,6 @@
-= Spring Data MongoDB
+= Teiid MongoDB
+
+link:teiid.io[Teiid] is a opensource data virtualization platform, which offers a relational abstraction of all information sources and exposes the information source to service, this integration show how use relational SQL and OData API to access document data in MongoDB.
 
 == Prepare MongoDB and sample Data
 
@@ -24,10 +26,19 @@ $ mongo admin --port 27000 -u "root" -p "mongo" --eval 'rs.add("localhost:27001"
 $ mongo admin --port 27000 -u "root" -p "mongo" --eval 'rs.add("localhost:27002")'
 ----
 
-[source, text]
+[source, bash]
 .*2. import data*
 ----
 $ mongoimport --host 'repl-1/localhost:27000,localhost:27001,localhost:27001' -u root -p mongo --authenticationDatabase 'admin' --db china -c cities --file china.json --type json
+----
+
+[source, json]
+.*3. sample data*
+----
+db.cities.aggregate([{$unwind: "$cities"}, {$project: {_id: 0, province: "$province_name_zh", city: "$cities.city_name_zh", prefecture: "$cities.prefecture"}}, {$limit : 3}])
+{ "province" : "北京市", "city" : "北京市", "prefecture" : "none" }
+{ "province" : "香港特别行政区", "city" : "香港特别行政区", "prefecture" : "none" }
+{ "province" : "天津市", "city" : "天津市", "prefecture" : "none" }
 ----
 
 == Run
