@@ -1,0 +1,92 @@
+= Spark Java
+
+== Prepare MongoDB and sample Data
+
+[source, bash]
+.*1. Start a 3 nodes Replica Set*
+----
+//Create Data storage path and encryption keyfile
+$ mkdir -p ~/tmp/r{0,1,2}
+$ openssl rand -base64 755 > ~/tmp/keyfile
+$ chmod 400 ~/tmp/keyfile
+
+//Start
+$ for i in 0 1 2 ; do mongod --dbpath ~/tmp/r$i --logpath ~/tmp/r$i/mongo.log --port 2700$i --fork --auth --keyFile ~/tmp/keyfile --replSet repl-1 ; done
+
+//Init
+$ mongo admin --port 27000 --eval "rs.initiate()"
+
+//Create Security Account
+$ mongo admin --port 27000 --eval 'db.createUser({user: "root", pwd: "mongo", roles: [{ role:"root", db: "admin" }]})'
+
+//Add Secondary nodes
+$ mongo admin --port 27000 -u "root" -p "mongo" --eval 'rs.add("localhost:27001")'
+$ mongo admin --port 27000 -u "root" -p "mongo" --eval 'rs.add("localhost:27002")'
+----
+
+[source, bash]
+.*2. Connect from mongo shell, and sample some data*
+----
+$ mongo admin --host 'repl-1/localhost:27000,localhost:27001,localhost:27002' -u root -p mongo
+use test
+db.characters.insertMany([{"name" : "Bilbo Baggins", "age" : 50}, {"name" : "Gandalf", "age" : 1000}, {"name" : "Thorin", "age" : 195}, {"name" : "Balin", "age" : 178}, {"name" : "Kíli", "age" : 77}, {"name" : "Dwalin", "age" : 169}, {"name" : "Óin", "age" : 167}, {"name" : "Glóin", "age" : 158}, {"name" : "Fíli", "age" : 82}, {"name" : "Bombur"}])
+----
+
+== Prepare Spark and Java
+
+[source, bash]
+.*1. check java*
+----
+$ java -version
+java version "1.8.0_201"
+Java(TM) SE Runtime Environment (build 1.8.0_201-b09)
+Java HotSpot(TM) 64-Bit Server VM (build 25.201-b09, mixed mode)
+----
+
+[source, bash]
+.*2. check scala*
+----
+$ scala -version
+Scala code runner version 2.12.8 -- Copyright 2002-2018, LAMP/EPFL and Lightbend, Inc.
+----
+
+[source, bash]
+.*3. check spark*
+----
+$ spark-submit --version
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /___/ .__/\_,_/_/ /_/\_\   version 2.4.3
+      /_/
+                        
+Using Scala version 2.11.12, Java HotSpot(TM) 64-Bit Server VM, 1.8.0_201
+----
+
+== Run Spark Java
+
+|===
+|No | Items
+
+|1
+|link:src/main/java/org/mongodb/sample/GettingStarted.java[GettingStarted]
+
+|2
+|link:src/main/java/org/mongodb/sample/WriteToMongoDB.java[WriteToMongoDB]
+
+|3
+|link:src/main/java/org/mongodb/sample/WriteToMongoDBWriteConfig.java[WriteToMongoDBWriteConfig]
+
+|4
+|link:src/main/java/org/mongodb/sample/ReadFromMongoDB.java[ReadFromMongoDB]
+
+|5
+|link:src/main/java/org/mongodb/sample/ReadFromMongoDBReadConfig.java[ReadFromMongoDBReadConfig]
+
+|6
+|link:src/main/java/org/mongodb/sample/Aggregation.java[Aggregation]
+
+|7
+|link:src/main/java/org/mongodb/sample/DatasetSQL.java[DatasetSQL]
+|===
