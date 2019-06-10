@@ -1,0 +1,27 @@
+= Spark Python
+
+== Prepare MongoDB and sample Data
+
+[source, bash]
+.*1. Start a 3 nodes Replica Set*
+----
+//Create Data storage path and encryption keyfile
+$ mkdir -p ~/tmp/r{0,1,2}
+$ openssl rand -base64 755 > ~/tmp/keyfile
+$ chmod 400 ~/tmp/keyfile
+
+//Start
+$ for i in 0 1 2 ; do mongod --dbpath ~/tmp/r$i --logpath ~/tmp/r$i/mongo.log --port 2700$i --fork --auth --keyFile ~/tmp/keyfile --replSet repl-1 ; done
+
+//Init
+$ mongo admin --port 27000 --eval "rs.initiate()"
+
+//Create Security Account
+$ mongo admin --port 27000 --eval 'db.createUser({user: "root", pwd: "mongo", roles: [{ role:"root", db: "admin" }]})'
+
+//Add Secondary nodes
+$ mongo admin --port 27000 -u "root" -p "mongo" --eval 'rs.add("localhost:27001")'
+$ mongo admin --port 27000 -u "root" -p "mongo" --eval 'rs.add("localhost:27002")'
+----
+
+
