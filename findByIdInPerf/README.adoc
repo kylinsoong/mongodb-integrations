@@ -116,7 +116,7 @@ tcp        0      0 0.0.0.0:27017           0.0.0.0:*               LISTEN      
 [source, bash]
 .*1. 安装 Java*
 ----
-$ sudo yum install java-1.8.0-openjdk
+$ sudo yum install java-1.8.0-openjdk-devel
 $ java -version
 openjdk version "1.8.0_201"
 OpenJDK Runtime Environment (build 1.8.0_201-b09)
@@ -137,26 +137,40 @@ OS name: "linux", version: "4.14.123-111.109.amzn2.x86_64", arch: "amd64", famil
 ----
 
 [source, bash]
-.**
+.*3. 编译代码*
 ----
-
-----
-
-[source, bash]
-.**
-----
-
+$ git clone https://github.com/mongocn/integration.git
+$ cd integration/findByIdInPerf/bulk-load/
+$ mvn clean install
 ----
 
 [source, bash]
-.**
+.*4. 运行*
+----
+$ java -jar target/bulk-load-jar-with-dependencies.jar 
 ----
 
-----
+NOTE: 如上程序运行将会给数据库中插入 2000 万条数据。
+
+== 执行 findByIn 查询
 
 [source, bash]
-.**
+.*1. 连接到测试服务器*
 ----
+$ ssh -i kylinsoongbeijing.pem ec2-user@54.194.43.122
+
+//确保可以 ping 通
+$ ping miguvideo1.mongo.db.migu -c3
+----
+
+*2. 类似上面步骤安装 Java*
+
+*3. 类似上面步骤安装 Maven*
+
+[source, bash]
+.*4. 下载并编译代码*
+----
+$ git clone https://github.com/mongocn/integration.git
 
 ----
 
