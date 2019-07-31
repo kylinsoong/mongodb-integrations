@@ -1,0 +1,185 @@
+= findbyID performance test
+:toc: manual
+
+== 准备测试数据
+
+=== 准备服务器
+
+[source, bash]
+.*连接到服务器，查看服务配置，并进行配置*
+----
+$ ssh -i kylinsoongbeijing.pem ec2-user@54.194.43.122
+$ sudo hostnamectl set-hostname miguvideo1.mongo.db.migu
+
+//32GB 内存
+$ free -g
+              total        used        free      shared  buff/cache   available
+Mem:             31           0          30           0           0          30
+
+// 8 CPU
+$ nproc 
+8
+
+//挂载一个 150 GB盘，测试数据 2000 万，需要约 80 GB
+$ lsblk |grep xvdb
+xvdb    202:16   0  150G  0 disk 
+$ sudo mkfs -t xfs /dev/xvdb
+$ sudo mkdir /data
+$ sudo mount /dev/xvdb /data
+$ grep -q /dev/xvdb /etc/fstab || echo "/dev/xvdb       /data          xfs     defaults,noatime   1  1" | sudo tee --append /etc/fstab
+$ sudo reboot
+
+// 再次登入，查看挂载的盘大小为 150GB, IOPS 3000
+$ ssh -i kylinsoongbeijing.pem ec2-user@54.194.43.122
+$ df -h | grep xvdb
+/dev/xvdb       150G  186M  150G   1% /data 
+----
+
+=== 服务器性能调优
+
+[source, bash]
+.*1. 调整 NUMA*
+----
+$ grep -q 'vm.zone_reclaim_mode' /etc/sysctl.conf || echo "vm.zone_reclaim_mode=0" | sudo tee --append /etc/sysctl.conf
+$ sudo sysctl -w  vm.zone_reclaim_mode=0
+----
+
+[source, bash]
+.*2. 配置 Swap*
+----
+$ grep -q 'vm.swappiness' /etc/sysctl.conf || echo "vm.swappiness=1" | sudo tee --append /etc/sysctl.conf
+$ sudo sysctl -w  vm.swappiness=1
+----
+
+[source, bash]
+.*3. 调大资源限制*
+----
+$ for limit in fsize cpu as memlock
+do
+  grep "mongodb" /etc/security/limits.conf | grep -q $limit || echo -e "mongod     hard   $limit    unlimited\nmongod     soft    $limit   unlimited" | sudo tee --append /etc/security/limits.conf
+done
+
+$ for limit in nofile noproc
+do
+  grep "mongodb" /etc/security/limits.conf | grep -q $limit || echo -e "mongod     hard   $limit    64000\nmongod     soft    $limit   64000" | sudo tee --append /etc/security/limits.conf
+done
+----
+
+=== 安装
+
+[source, bash]
+.*1. yum 源*
+----
+cat << 'ENDOFDOC' | sudo tee /etc/yum.repos.d/mongodb-enterprise.repo
+[mongodb-enterprise]
+name=MongoDB Enterprise Repository
+baseurl=https://repo.mongodb.com/yum/amazon/2/mongodb-enterprise/4.0/$basearch/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc
+ENDOFDOC
+----
+
+[source, bash]
+.*2. 安装*
+----
+sudo yum install -y mongodb-enterprise
+----
+
+[source, bash]
+.*3. 创建数据库目录*
+----
+sudo mkdir /data/db
+sudo chown mongod:mongod /data/db
+sudo mkdir /data/logs
+sudo chown mongod:mongod /data/logs
+----
+
+[source, bash]
+.*4. 启动*
+----
+sudo systemctl start mongod
+----
+
+[source, bash]
+.*5. 查看数据运行*
+----
+$ ps -ef | grep mongod
+mongod    7024     1  0 04:20 ?        00:00:00 /usr/bin/mongod -f /etc/mongod.conf
+
+$ sudo netstat  -antulop | grep 7024
+tcp        0      0 0.0.0.0:27017           0.0.0.0:*               LISTEN      7024/mongod          off (0.00/0/0)
+----
+
+=== 运行 bulk-load
+
+[source, bash]
+.*1. 安装 Java*
+----
+$ sudo yum install java-1.8.0-openjdk
+$ java -version
+openjdk version "1.8.0_201"
+OpenJDK Runtime Environment (build 1.8.0_201-b09)
+OpenJDK 64-Bit Server VM (build 25.201-b09, mixed mode)
+----
+
+[source, bash]
+.*2. 安装 Maven*
+----
+$ wget http://apache.cs.utah.edu/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.zip
+$ unzip apache-maven-3.6.1-bin.zip
+$ mvn --version
+Apache Maven 3.6.1 (d66c9c0b3152b2e69ee9bac180bb8fcc8e6af555; 2019-04-04T19:00:29Z)
+Maven home: /home/ec2-user/apache-maven-3.6.1
+Java version: 1.8.0_201, vendor: Oracle Corporation, runtime: /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.201.b09-0.amzn2.x86_64/jre
+Default locale: en_US, platform encoding: ANSI_X3.4-1968
+OS name: "linux", version: "4.14.123-111.109.amzn2.x86_64", arch: "amd64", family: "unix"
+----
+
+[source, bash]
+.**
+----
+
+----
+
+[source, bash]
+.**
+----
+
+----
+
+[source, bash]
+.**
+----
+
+----
+
+[source, bash]
+.**
+----
+
+----
+
+[source, bash]
+.**
+----
+
+----
+
+[source, bash]
+.**
+----
+
+----
+
+[source, bash]
+.**
+----
+
+----
+
+[source, bash]
+.**
+----
+
+----

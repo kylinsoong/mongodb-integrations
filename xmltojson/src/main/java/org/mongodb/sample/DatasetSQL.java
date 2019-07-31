@@ -30,8 +30,7 @@ public class DatasetSQL {
 		Dataset<Row> implicitDS = MongoSpark.load(jsc).toDF();
 		implicitDS.printSchema();
 		implicitDS.show();
-		
-		
+			
 	    
 	    /**
 	     * Create the temp view and execute the query
