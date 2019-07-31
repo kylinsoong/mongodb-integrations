@@ -43,13 +43,15 @@ public class App {
 		
 		System.out.println("\n\n\t $in performance test(Id array length is ) + " + count + "\n\n");
 		
-		List<String> ids = generateRandomId(count);
+		
 		
 		long[] queryArray = new long[10];
 		long[] iteratorArray = new long[10];
 		
 		for (int i = 0 ; i < 10 ; i++) {
+			List<String> ids = generateRandomId(count);
 			 MongoCollection<Document> collection = collection();
+			 
 		        
 		        Bson query = Filters.in("_id", ids.toArray());
 		        long start = System.currentTimeMillis();

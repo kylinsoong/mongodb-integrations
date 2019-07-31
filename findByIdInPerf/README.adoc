@@ -171,29 +171,72 @@ $ ping miguvideo1.mongo.db.migu -c3
 .*4. 下载并编译代码*
 ----
 $ git clone https://github.com/mongocn/integration.git
+$ cd integration/findByIdInPerf/findByIn/
+$ mvn clean install
+----
+
+== 执行查询
+
+上面步骤会生成一个 Jar，可以根据不同参数执行不同深度的 $in 查询，
+
+例如 java -jar <Fat.jar> 50  -  表示 $in 对应数组长度为 50。
+
+[source, bash]
+.*1. ID 数目为 50*
+----
+$ java -jar target/findByIn-jar-with-dependencies.jar 50
+...
+
+	 Average Query spend 87 milliseconds, Iterator spend 110
 
 ----
 
 [source, bash]
-.**
+.*2. ID 数目为 100*
 ----
+$ java -jar target/findByIn-jar-with-dependencies.jar 100
+...
+
+	 Average Query spend 149 milliseconds, Iterator spend 194
 
 ----
 
 [source, bash]
-.**
+.*3. ID 数目为 200*
 ----
+$ java -jar target/findByIn-jar-with-dependencies.jar 200
+...
+
+	 Average Query spend 149 milliseconds, Iterator spend 337
 
 ----
 
 [source, bash]
-.**
+.*4. ID 数目为 500*
 ----
+$ java -jar target/findByIn-jar-with-dependencies.jar 500
+...
+
+	 Average Query spend 159 milliseconds, Iterator spend 748
 
 ----
 
 [source, bash]
-.**
+.*5. ID 数目为 1000*
 ----
+$ java -jar target/findByIn-jar-with-dependencies.jar 1000
+...
+
+         Average Query spend 133 milliseconds, Iterator spend 1270
+
+----
+
+[source, bash]
+.*6. ID 数目为 10000*
+----
+$ java -jar target/findByIn-jar-with-dependencies.jar 10000
+...
+
+         Average Query spend 134 milliseconds, Iterator spend 9667
 
 ----
