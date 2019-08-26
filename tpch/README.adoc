@@ -1,0 +1,96 @@
+= Why this project?
+
+This project provide performance bechmark against MongoDB and other RDBMS with TPCH.
+
+== Evn Set up
+
+[source, bash]
+.*1. RPM install*
+----
+$ sudo yum groupinstall -y "Development Tools"
+
+$ sudo yum install -y cmake3 python3
+----
+
+[source, bash]
+.*2. Download and compile TPCH*
+----
+$ git clone https://github.com/databricks/tpch-dbgen.git
+$ cd ~/tpch-dbgen/
+$ make
+----
+
+[source, bash]
+.*3. Generate Data*
+----
+./generate-data.sh <scale>
+----
+
+NOTE: `scale` is a flot number. It is a number of gigabytes of data to generate. A scale one (1) will generate 8 tables (made up of 150k Customers, 6million Line Items and 1.5million Orders) 
+
+[source, bash]
+.*4. Setup PostGreSQL*
+----
+$ sudo yum install -y postgresql-server postgresql-devel
+
+// Create a new Postgres database cluster
+$ sudo postgresql-setup --initdb
+ * Initializing database in '/var/lib/pgsql/data'
+ * Initialized, logs are in /var/lib/pgsql/initdb_postgresql.log
+
+// Config 
+$ sudo vim /var/lib/pgsql/data/postgresql.conf
+listen_addresses = '*'
+$ sudo vim /var/lib/pgsql/data/pg_hba.conf
+host    all             all             0.0.0.0/0               md5
+
+// Start the services of Postgres
+$ sudo systemctl enable postgresql
+$ sudo systemctl start postgresql
+
+// Create DB and User
+$ sudo passwd postgres
+$ su - postgres
+$ sudo -u postgres createuser tpch
+$ sudo -u postgres createdb tpchdb
+$ sudo -u postgres psql
+ 
+  ALTER USER tpch WITH ENCRYPTED PASSWORD 'tpch';
+  GRANT ALL PRIVILEGES ON DATABASE tpchdb TO tpch;
+  \l
+  \q
+
+// Remote connect to PostGreSQL
+$ psql -h 127.0.0.1 -p 5432 -d tpchdb -U tpch -W
+----
+
+[source, bash]
+.*5. Load data to PostGreSQL*
+----
+$ load-data-into-db.sh <hostname> <port> <dbname> <username>
+
+$ psql -h 127.0.0.1 -p 5432 -d tpchdb -U tpch -W
+
+tpchdb=> \dt
+tpchdb=> SELECT * FROM tpch.customer LIMIT 1;
+tpchdb=> SELECT * FROM tpch.orders LIMIT 1;
+tpchdb=> SELECT * FROM tpch.lineitem LIMIT 1;
+tpchdb=> SELECT COUNT(*) FROM tpch.orders;
+tpchdb=> SELECT COUNT(*) FROM tpch.lineitem;
+----
+
+NOTE: you need enter the password in prompt; `tpch.orders` has 4.5m records; `tpch.lineitem` has 18m records.
+
+[source, bash]
+.**
+----
+
+----
+
+[source, bash]
+.**
+----
+
+----
+
+
