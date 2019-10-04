@@ -18,6 +18,48 @@ public class ExampleCallbackAPI {
 
 	public static void main(String[] args) {
 
+//		replicasetTrtansaction();
+		
+		shardedTrtansaction();
+		
+	}
+	
+	static void shardedTrtansaction () {
+		
+		final MongoClient client = MongoClients.create("mongodb://localhost:27017");
+		
+		final ClientSession session = client.startSession();
+		
+		TransactionOptions txnOptions = TransactionOptions.builder()
+				.readPreference(primary())
+				.readConcern(LOCAL)
+				.writeConcern(MAJORITY)
+				.build();
+			
+		TransactionBody<?> txnBody = new TransactionBody<String>() {
+
+			@Override
+			public String execute() {
+				
+				MongoCollection<Document> coll1 = client.getDatabase("db1").getCollection("foo");
+		        MongoCollection<Document> coll2 = client.getDatabase("db2").getCollection("bar");
+		        
+		        coll1.insertOne(session, new Document("abc", 1));
+		        coll2.insertOne(session, new Document("xyz", 999));
+		        
+				return "SUCCESS";
+			}
+		};
+		
+		try {
+			session.withTransaction(txnBody, txnOptions);
+		} finally {
+			session.close();
+		}
+	}
+	
+	static void replicasetTrtansaction () {
+		
 		String uri = "mongodb://localhost:27000,localhost:27001,localhost:27002/admin?replicaSet=repl";
 		
 		final MongoClient client = MongoClients.create(uri);
