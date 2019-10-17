@@ -1,8 +1,11 @@
 package org.mongodb.sample;
 
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
-
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -10,7 +13,9 @@ import java.util.concurrent.TimeUnit;
 
 public class App {
 	
-	public static String URI = "mongodb://tbdssBI:Gcms201901!@22.188.70.193:32000/test?authSource=TBDSS_TBDSSBI";
+	//?readPreference=secondaryPreferred
+	
+	public static String URI = "mongodb://localhost:27017";
 	public static String DB_NAME = "TBDSS_TBDSSBI";
 	public static String COLL_NAME = "ApcCdeTraCollection";
 	public static Integer THREADS  = 2;
@@ -18,7 +23,18 @@ public class App {
 	
 	
 	
-	public static void main( String[] args ) throws InterruptedException  {
+	public static void main( String[] args ) throws InterruptedException, FileNotFoundException, IOException  {
+		
+		String confName = null;
+		
+		for(int i = 0 ; i < args.length ; i++) {
+			if(args[i].equals("--config") || args[i].equals("-conf")) {
+				confName = args[++i];
+			}
+		}
+		
+		initFromConf(confName);
+		
 		
 		for(int i = 0 ; i < args.length ; i++) {
 			
@@ -34,6 +50,12 @@ public class App {
 				IS_PRINT = Boolean.valueOf(true);	
 			}  
 		}
+		
+		System.out.println("Connection URI for MongoDB: " + URI);
+		System.out.println("Database Name: " + DB_NAME);
+		System.out.println("Collection Name: " + COLL_NAME);
+		System.out.println("Current Load Number: " + THREADS);
+		System.out.println("Whether Print Result: " + IS_PRINT);
 		
 		ExecutorService executor = Executors.newFixedThreadPool(THREADS);
 		
@@ -53,6 +75,25 @@ public class App {
 		
 
     }
+
+
+
+	private static void initFromConf(String confName) throws FileNotFoundException, IOException {
+		
+		if(null == confName) {
+			return ;
+		}
+
+		Properties prop = new Properties();
+
+		prop.load(new FileInputStream(confName));
+		
+		URI = prop.getProperty("tbdssbi.connection.uri", URI);
+		DB_NAME = prop.getProperty("tbdssbi.database.name", DB_NAME);
+		COLL_NAME = prop.getProperty("tbdssbi.collection.name", COLL_NAME);
+		THREADS = Integer.parseInt(prop.getProperty("tbdssbi.load.current", String.valueOf(THREADS)));
+		IS_PRINT = Boolean.parseBoolean(prop.getProperty("tbdssbi.load.print", "false"));
+	}
 	
 	
 

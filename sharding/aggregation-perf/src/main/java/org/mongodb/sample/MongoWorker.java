@@ -10,6 +10,8 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.ReadPreference;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -52,6 +54,10 @@ public class MongoWorker implements Runnable {
 		Thread.currentThread().setName("aggregation-" + id);
 		
         ConnectionString connectionString = new ConnectionString(uri);
+        
+//        MongoClientSettings settings = MongoClientSettings.builder().applyConnectionString(connectionString).build();
+        
+        
 		
 		MongoClient mongoClient = MongoClients.create(connectionString);
 		MongoDatabase database = mongoClient.getDatabase(db);
