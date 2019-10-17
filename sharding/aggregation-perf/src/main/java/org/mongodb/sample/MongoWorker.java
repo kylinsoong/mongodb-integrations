@@ -1,6 +1,5 @@
 package org.mongodb.sample;
 
-
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -10,8 +9,6 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.ReadPreference;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -37,7 +34,6 @@ public class MongoWorker implements Runnable {
 	
 	private Boolean isPrintResult = false;
 
-
 	public MongoWorker(Integer id, String uri, String db, String coll, Boolean isPrintResult ) {
 		super();
 		this.id = id;
@@ -47,7 +43,6 @@ public class MongoWorker implements Runnable {
 		this.isPrintResult = isPrintResult;
 	}
 	
-	
 	@Override
 	public void run() {
 		
@@ -56,9 +51,7 @@ public class MongoWorker implements Runnable {
         ConnectionString connectionString = new ConnectionString(uri);
         
 //        MongoClientSettings settings = MongoClientSettings.builder().applyConnectionString(connectionString).build();
-        
-        
-		
+        	
 		MongoClient mongoClient = MongoClients.create(connectionString);
 		MongoDatabase database = mongoClient.getDatabase(db);
 		MongoCollection<Document> collection = database.getCollection(coll);
@@ -113,8 +106,4 @@ public class MongoWorker implements Runnable {
 		mongoClient.close();
 	}
 	
-
-
-	
-
 }
