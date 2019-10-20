@@ -64,7 +64,7 @@
                 <finalName>aggregation-perf</finalName>
                 <archive>
                   <manifest>
-                    <mainClass>org.mongodb.sample.App</mainClass>
+                    <mainClass>org.mongodb.perf.App</mainClass>
                   </manifest>
                 </archive>
               </configuration>

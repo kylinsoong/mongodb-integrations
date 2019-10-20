@@ -1,4 +1,4 @@
-package org.mongodb.sample;
+package org.mongodb.perf;
 
 
 import java.io.FileInputStream;
@@ -29,11 +29,12 @@ public class App {
 	//?readPreference=secondaryPreferred
 	
 	public static String URI = "mongodb://localhost:27017";
-	public static String DB_NAME = "TBDSS_TBDSSBI";
+	public static String DB_NAME = "test";
 	public static String COLL_NAME = "ApcCdeTraCollection";
 	public static Integer THREADS  = 2;
 	public static Boolean IS_PRINT  = false;
 	
+	public static Boolean IS_COUNT = false;
 	
 	
 	public static void main( String[] args ) throws InterruptedException, FileNotFoundException, IOException  {
@@ -64,11 +65,20 @@ public class App {
 				THREADS = Integer.parseInt(args[++i]);	
 			} else if(args[i].equals("--print") || args[i].equals("-p")) {
 				IS_PRINT = Boolean.valueOf(true);	
+			}  else if(args[i].equals("--count") || args[i].equals("-count")) {
+				IS_COUNT = Boolean.valueOf(true);	
 			}  
 		}
 		
 		System.out.println("Connection URI for MongoDB: " + URI);
 		System.out.println("Database Name: " + DB_NAME);
+		
+		
+		if(IS_COUNT) { 
+			CollectionsStatsCountWorker count = new CollectionsStatsCountWorker(URI, DB_NAME);
+			System.exit(0);
+		}
+		
 		System.out.println("Collection Name: " + COLL_NAME);
 		System.out.println("Current Load Number: " + THREADS);
 		System.out.println("Whether Print Result: " + IS_PRINT);
@@ -84,6 +94,7 @@ public class App {
 			
 			for(int i = 0 ; i < p.pipelines.size() ; i ++) {
 				
+				System.out.println("$ Aggregation Pipeline [" + (i + 1) + "]");
 				System.out.println("$ 优化前：");
 				System.out.println(p.original(i));
 				
@@ -108,6 +119,9 @@ public class App {
 				lighter = true;
 				
 				Date end = new Date() ;
+				if(computeEnd == null) {
+					computeEnd = end;
+				}
 				
 				System.out.println("$ 时间统计：\n总时间：" + (end.getTime() - start.getTime()) + "毫秒， 数据查询时间：" + (computeEnd.getTime() - start.getTime()) + "毫秒， 遍历及反序列化时间：" + (end.getTime() - computeEnd.getTime() + "毫秒\n\n"));
 			}
@@ -115,10 +129,10 @@ public class App {
 		} else {
 			ExecutorService executor = Executors.newFixedThreadPool(THREADS);
 			
-			ArrayList<MongoWorker> workers = new ArrayList<>();
+			ArrayList<AggregationPerformanceWorker> workers = new ArrayList<>();
 			
 			for (int i = 0 ; i < THREADS ; i ++) {
-				workers.add(new MongoWorker(i, URI, DB_NAME, COLL_NAME, IS_PRINT));
+				workers.add(new AggregationPerformanceWorker(i, URI, DB_NAME, COLL_NAME, IS_PRINT));
 			}
 			
 			workers.forEach(r -> {

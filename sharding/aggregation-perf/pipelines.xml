@@ -1,17 +1,14 @@
 <?xml version = "1.0"?>
 <pipelines>
-   <pipeline value = "[{$match: {   $or: [     {       ibkOrg: {         $ne: '00001'       }     },     {       ibkOrg: {         $eq: null       }     },     {       ibkName: {         $ne: '总行（本部）              '       }     },     {       ibkName: {         $eq: null       }     }   ] }}, {$group: {   _id: {     ibkOrg: '$ibkOrg',     ibkName: '$ibkName'   },   'Sum_交易金额折人民币': {     $sum: '$traCny'   },   'Sum_交易金额折人民币_max0': {     $max: '$traCny'   } }}, {$project: {   _id: 0,   ibkOrg: '$_id.ibkOrg',   ibkName: '$_id.ibkName',   'Sum_交易金额折人民币': {     $cond: {       if: {$eq: ['$Sum_交易金额折人民币_max0', null]},         then: null,         else: '$Sum_交易金额折人民币'     }   } }}, {$sort: {   ibkOrg: 1,   ibkName: 1 }}, {$limit: 5000000}]">
-     <stage>{$match: {$or: [{ibkOrg: {$ne: '00001'}}, {ibkOrg: {$eq: null}}, {ibkName: {$ne: '总行（本部）              '}}, {ibkName: {$eq: null}}]}}</stage>
-     <stage>{$group: {_id: {ibkOrg: '$ibkOrg', ibkName: '$ibkName'},   'Sum_交易金额折人民币': {$sum: '$traCny'}, 'Sum_交易金额折人民币_max0': {$max: '$traCny'}}}</stage>
-     <stage>{$project: {_id: 0, ibkOrg: '$_id.ibkOrg', ibkName: '$_id.ibkName', 'Sum_交易金额折人民币': {$cond: { if: {$eq: ["$Sum_交易金额折人民币_max0", null]}, then: null, else: "$Sum_交易金额折人民币"}}}}</stage>
-     <stage>{$sort: {ibkOrg: 1, ibkName: 1 }}</stage>
-     <stage>{$limit: 5000000}</stage>
+   <pipeline>
+     <mql>[{$match: {   $or: [     {       ibkOrg: {         $ne: '00001'       }     },     {       ibkOrg: {         $eq: null       }     },     {       ibkName: {         $ne: '总行（本部）              '       }     },     {       ibkName: {         $eq: null       }     }   ] }}, {$group: {   _id: {     ibkOrg: '$ibkOrg',     ibkName: '$ibkName'   },   'Sum_交易金额折人民币': {     $sum: '$traCny'   },   'Sum_交易金额折人民币_max0': {     $max: '$traCny'   } }}, {$project: {   _id: 0,   ibkOrg: '$_id.ibkOrg',   ibkName: '$_id.ibkName',   'Sum_交易金额折人民币': {     $cond: {       if: {$eq: ['$Sum_交易金额折人民币_max0', null]},         then: null,         else: '$Sum_交易金额折人民币'     }   } }}, {$sort: {   ibkOrg: 1,   ibkName: 1 }}, {$limit: 5000000}]</mql>
+     <stages>
+       <stage>{$match: {$or: [{ibkOrg: {$ne: '00001'}}, {ibkOrg: {$eq: null}}, {ibkName: {$ne: '总行（本部）              '}}, {ibkName: {$eq: null}}]}}</stage>
+       <stage>{$group: {_id: {ibkOrg: '$ibkOrg', ibkName: '$ibkName'},   'Sum_交易金额折人民币': {$sum: '$traCny'}, 'Sum_交易金额折人民币_max0': {$max: '$traCny'}}}</stage>
+       <stage>{$project: {_id: 0, ibkOrg: '$_id.ibkOrg', ibkName: '$_id.ibkName', 'Sum_交易金额折人民币': {$cond: { if: {$eq: ["$Sum_交易金额折人民币_max0", null]}, then: null, else: "$Sum_交易金额折人民币"}}}}</stage>
+       <stage>{$sort: {ibkOrg: 1, ibkName: 1 }}</stage>
+       <stage>{$limit: 5000000}</stage>
+     </stages>
    </pipeline>
-   <pipeline value = "[{$match: {   $or: [     {       ibkOrg: {         $ne: '00001'       }     },     {       ibkOrg: {         $eq: null       }     },     {       ibkName: {         $ne: '总行（本部）              '       }     },     {       ibkName: {         $eq: null       }     }   ] }}, {$group: {   _id: {     ibkOrg: '$ibkOrg',     ibkName: '$ibkName'   },   'Sum_交易金额折人民币': {     $sum: '$traCny'   },   'Sum_交易金额折人民币_max0': {     $max: '$traCny'   } }}, {$project: {   _id: 0,   ibkOrg: '$_id.ibkOrg',   ibkName: '$_id.ibkName',   'Sum_交易金额折人民币': {     $cond: {       if: {$eq: ['$Sum_交易金额折人民币_max0', null]},         then: null,         else: '$Sum_交易金额折人民币'     }   } }}, {$sort: {   ibkOrg: 1,   ibkName: 1 }}, {$limit: 5000000}]">
-     <stage>{$match: {$or: [{ibkOrg: {$ne: '00001'}}, {ibkOrg: {$eq: null}}, {ibkName: {$ne: '总行（本部）              '}},     {ibkName: {$eq: null}}]}}</stage>
-     <stage>{$group: {_id: {ibkOrg: '$ibkOrg', ibkName: '$ibkName'},   'Sum_交易金额折人民币': {$sum: '$traCny'}, 'Sum_交易金额折人民币_max0': {$max: '$traCny'}}}</stage>
-     <stage>{$project: {_id: 0, ibkOrg: '$_id.ibkOrg', ibkName: '$_id.ibkName', 'Sum_交易金额折人民币': {$cond: { if: {$eq: ["$Sum_交易金额折人民币_max0", null]}, then: null, else: "$Sum_交易金额折人民币"}}}}</stage>
-     <stage>{$sort: {ibkOrg: 1, ibkName: 1 }}</stage>
-     <stage>{$limit: 5000000}</stage>
-   </pipeline>  
+    
 </pipelines>

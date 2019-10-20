@@ -1,4 +1,4 @@
-package org.mongodb.sample;
+package org.mongodb.perf;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -68,13 +68,12 @@ public class Pipelines {
         		List<org.bson.Document> pipeline = new ArrayList<>();
         		StringBuffer sb = new StringBuffer();
         		sb.append("[");
-        		String value = eElement.getAttribute("value");
-        		original.add(value);
         		NodeList slist = eElement.getElementsByTagName("stage");
-        		
+        		original.add(eElement.getElementsByTagName("mql").item(0).getTextContent());
         		for(int i = 0 ; i < slist.getLength() ; i ++) {
         			Node sNode = slist.item(i);
         			String json = sNode.getTextContent();
+        			
         			sb.append(json).append(",");
         			org.bson.Document stage = org.bson.Document.parse(json);
         			pipeline.add(stage);

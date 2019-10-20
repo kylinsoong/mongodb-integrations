@@ -1,4 +1,4 @@
-package org.mongodb.sample;
+package org.mongodb.perf;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -22,7 +22,7 @@ import static com.mongodb.client.model.Accumulators.*;
 import static com.mongodb.client.model.Sorts.*;
 import static com.mongodb.client.model.Projections.*;
 
-public class MongoWorker implements Runnable {
+public class AggregationPerformanceWorker implements Worker {
 	
 	private final Integer id;
 	
@@ -34,7 +34,7 @@ public class MongoWorker implements Runnable {
 	
 	private Boolean isPrintResult = false;
 
-	public MongoWorker(Integer id, String uri, String db, String coll, Boolean isPrintResult ) {
+	public AggregationPerformanceWorker(Integer id, String uri, String db, String coll, Boolean isPrintResult ) {
 		super();
 		this.id = id;
 		this.uri = uri;

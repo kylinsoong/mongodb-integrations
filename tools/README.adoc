@@ -1,0 +1,20 @@
+= MongoDB Tools?
+
+MongoDB Tools used to Sizing, Architectures, etc.
+
+== listCollStats
+
+List collections by count/size/storageSize.
+
+[source, bash]
+.*Execute on command line*
+----
+mongo localhost:27017/test listCollStats.js 
+----
+
+[source, bash]
+.*Alternatively, execute from mongo shell*
+----
+load("listCollStats.js")
+----
+
