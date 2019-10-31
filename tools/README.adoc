@@ -18,3 +18,42 @@ mongo localhost:27017/test listCollStats.js
 load("listCollStats.js")
 ----
 
+== loaders.js
+
+A business simulation loader js, which used in MongoDB queries performance estimation. The js should be run against MongoDB Shell under specific database.
+
+Steps to run  `loaders.js`:
+
+1. Download `loaders.js` and edit set a loop size, a loop represent a business scenario related database queries
+2. Edit `loaders.js` set the queries, a business scenario usually related multiple queries
+3. Run `loaders.js`, usually can use multiple terminal to run `loaders.js` 
+
+[source, json]
+.*SAMPLE: run from mongos*
+----
+mongos> load("loaders.js")
+
+[qgy5wa] start simulating business load ...
+
+
+[qgy5wa] end, loader loops 200 times
+{
+	"name" : "Real Time Dashboard",
+	"threads" : "qgy5wa",
+	"loop" : 200,
+	"opcount" : 1000,
+	"start" : ISODate("2019-10-31T07:27:02.057Z"),
+	"end" : ISODate("2019-10-31T07:27:02.258Z"),
+	"totalTime" : 201,
+	"avgTime" : 1.005
+}
+
+[qgy5wa] Real Time Dashboard loader final aggregate results
+{
+	"_id" : "Real Time Dashboard",
+	"totalLoop" : 1400,
+	"totalDBOps" : 7000,
+	"totalTime" : 212,
+	"avgTime" : 1.06
+}
+----

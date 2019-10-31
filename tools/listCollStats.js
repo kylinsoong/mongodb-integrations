@@ -8,8 +8,8 @@ dbName = db.getName()
 print("Current database: [" + dbName + "]")
 print()
 
-conn = new Mongo();
-db = conn.getDB(dbName);
+//conn = new Mongo();
+//db = conn.getDB(dbName);
 
 collectionInfos = []
 
@@ -22,6 +22,7 @@ for(c=0;c<collectionNames.length;c++) {
 for(c=0;c<collectionInfos.length;c++) {
   collInfo = collectionInfos[c]
   mb = 1024*1024
+  db = db.getSiblingDB(dbName)
   collStats = db[collInfo.name].stats()
  // printjson(collStats)
   size = collStats["size"]
@@ -35,6 +36,7 @@ for(c=0;c<collectionInfos.length;c++) {
   collectionInfos[c].count = count
   collectionInfos[c].size = size
   collectionInfos[c].storageSize = storageSize
+  collectionInfos[c].item = "item"
 }
 
 //printjson(collectionInfos)
@@ -61,5 +63,5 @@ while ( cursor.hasNext() ) {
    printjson( cursor.next() );
 }
 
-db.TMPLISTCOLLSTATS.drop()
+//db.TMPLISTCOLLSTATS.drop()
 
