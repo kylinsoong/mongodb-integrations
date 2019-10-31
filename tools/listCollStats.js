@@ -1,67 +1,85 @@
-//Main Loop
+//Main Loopo
+// Version: V0.2
+// Author: Kylin Soong(kylinsoong.1214@gmail.com)
+
+limitSize = 20;
+sleepTime = 1000 
 
 print()
-print("List collections by count/size/storageSize started...")
+print("list collections stats started ...")
 print()
 
 dbName = db.getName()
-print("Current database: [" + dbName + "]")
+print("current database: [" + dbName + "]")
 print()
-
-//conn = new Mongo();
-//db = conn.getDB(dbName);
-
-collectionInfos = []
 
 collectionNames = db.getCollectionNames()
 for(c=0;c<collectionNames.length;c++) {
-  //print(collectionNames[c])
-  collectionInfos.push({name:collectionNames[c],count:0,size:0,storageSize:0})
+  collectionName = collectionNames[c]
+  collStats = db[collectionName].stats()
+  db.TMP_LIST_COLL_STATS.insert(collStats)
+  print("collect stats: [" + collectionName + "]")
 }
+print()
 
-for(c=0;c<collectionInfos.length;c++) {
-  collInfo = collectionInfos[c]
-  mb = 1024*1024
-  db = db.getSiblingDB(dbName)
-  collStats = db[collInfo.name].stats()
- // printjson(collStats)
-  size = collStats["size"]
-  count = collStats["count"]
-  avgObjSize = collStats["avgObjSize"]
-  storageSize = collStats["storageSize"]
-  nindexes = collStats["nindexes"]
-  totalIndexSize = collStats["totalIndexSize"]
-
- // print(count + ", " + size + ", " + storageSize )
-  collectionInfos[c].count = count
-  collectionInfos[c].size = size
-  collectionInfos[c].storageSize = storageSize
-  collectionInfos[c].item = "item"
-}
-
-//printjson(collectionInfos)
-
-db.TMPLISTCOLLSTATS.insertMany(collectionInfos)
-
-print("List collections by count")
-cursor = db.TMPLISTCOLLSTATS.find({}, {_id: 0, name: 1, count: 1}).sort({count: -1})
+print("list top " + limitSize + " collections by count")
+sleep(sleepTime);
+cursor = db.TMP_LIST_COLL_STATS.find({}, {_id: 0, ns: 1, count: 1}).sort({count: -1}).limit(limitSize)
 while ( cursor.hasNext() ) {
    printjson( cursor.next() );
 }
+print()
+
+print("list top " + limitSize + " collections by size")
+sleep(sleepTime);
+cursor = db.TMP_LIST_COLL_STATS.find({}, {_id: 0, ns: 1, size: 1}).sort({size: -1}).limit(limitSize)
+while ( cursor.hasNext() ) {
+   printjson( cursor.next() );
+}
+print()
+
+print("list top " + limitSize + " collections by storageSize")
+sleep(sleepTime);
+cursor = db.TMP_LIST_COLL_STATS.find({}, {_id: 0, ns: 1, storageSize: 1}).sort({storageSize: -1}).limit(limitSize)
+while ( cursor.hasNext() ) {
+   printjson( cursor.next() );
+}
+print()
+
+print("list top " + limitSize + " collections by avgObjSize")
+sleep(sleepTime);
+cursor = db.TMP_LIST_COLL_STATS.find({}, {_id: 0, ns: 1, avgObjSize: 1}).sort({avgObjSize: -1}).limit(limitSize)
+while ( cursor.hasNext() ) {
+   printjson( cursor.next() );
+}
+print()
+
+print("list top " + limitSize + " collections by nindexes")
+sleep(sleepTime);
+cursor = db.TMP_LIST_COLL_STATS.find({}, {_id: 0, ns: 1, nindexes: 1}).sort({nindexes: -1}).limit(limitSize)
+while ( cursor.hasNext() ) {
+   printjson( cursor.next() );
+}
+print()
+
+print("list top " + limitSize + " collections by totalIndexSize")
+sleep(sleepTime);
+cursor = db.TMP_LIST_COLL_STATS.find({}, {_id: 0, ns: 1, totalIndexSize: 1}).sort({totalIndexSize: -1}).limit(limitSize)
+while ( cursor.hasNext() ) {
+   printjson( cursor.next() );
+}
+print()
+
+print("list the final summary")
+sleep(sleepTime);
+p = [{$group: {_id: null, totalSize: {$sum: '$size'}, totalDocuments: {$sum: '$count'}, totalStorageSize: {$sum: '$storageSize'}, totalIndexSize: {$sum: '$totalIndexSize'}}}, {$project: {_id: 0, totalSize:1, totalDocuments: 1, totalStorageSize: 1, totalIndexSize: 1 }}]
+cursor = db.TMP_LIST_COLL_STATS.aggregate(p)
+results = cursor.next()
+results.dbName = dbName
+results.totalCollections = collectionNames.length
+printjson(results)
+
+db.TMP_LIST_COLL_STATS.drop()
 
 print()
-print("List collections by size")
-cursor = db.TMPLISTCOLLSTATS.find({}, {_id: 0, name: 1, size: 1}).sort({size: -1})
-while ( cursor.hasNext() ) {
-   printjson( cursor.next() );
-}
-
-print()
-print("List collections by storageSize")
-cursor = db.TMPLISTCOLLSTATS.find({}, {_id: 0, name: 1, storageSize: 1}).sort({storageSize: -1})
-while ( cursor.hasNext() ) {
-   printjson( cursor.next() );
-}
-
-//db.TMPLISTCOLLSTATS.drop()
-
+sleep(1000);

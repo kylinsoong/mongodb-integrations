@@ -2,31 +2,46 @@
 
 MongoDB Tools used to Sizing, Architectures, etc.
 
-== listCollStats
+[cols="2,5a"]
+|===
+|*Name* |*Document*
 
-List collections by count/size/storageSize.
+|link:listCollStats.js[listCollStats.js]
+|List top X collections by size, storageSiz, count, etc
 
-[source, bash]
-.*Execute on command line*
+Steps to run `listCollStats.js`:
+
+1. Download and edit, set limitSize, which is the number X
+2. Run `listCollStats.js`
+
+[source, json]
+.*Example:*
 ----
-mongo localhost:27017/test listCollStats.js 
+> load("listCollStats.js")
+
+list collections stats started ..
+
+...
+
+list the final summary
+{
+	"totalSize" : 162097644,
+	"totalDocuments" : 1507556,
+	"totalStorageSize" : 31141888,
+	"totalIndexSize" : 15056896,
+	"dbName" : "test",
+	"totalCollections" : 6
+}
 ----
 
-[source, bash]
-.*Alternatively, execute from mongo shell*
-----
-load("listCollStats.js")
-----
-
-== loaders.js
-
-A business simulation loader js, which used in MongoDB queries performance estimation. The js should be run against MongoDB Shell under specific database.
+|link:loaders.js[loaders.js]
+|A business simulation loader js, which used in MongoDB queries performance estimation. The js should be run against MongoDB Shell under specific database.
 
 Steps to run  `loaders.js`:
 
 1. Download `loaders.js` and edit set a loop size, a loop represent a business scenario related database queries
 2. Edit `loaders.js` set the queries, a business scenario usually related multiple queries
-3. Run `loaders.js`, usually can use multiple terminal to run `loaders.js` 
+3. Run `loaders.js`, usually can use multiple terminal to run `loaders.js`
 
 [source, json]
 .*SAMPLE: run from mongos*
@@ -38,22 +53,27 @@ mongos> load("loaders.js")
 
 [qgy5wa] end, loader loops 200 times
 {
-	"name" : "Real Time Dashboard",
-	"threads" : "qgy5wa",
-	"loop" : 200,
-	"opcount" : 1000,
-	"start" : ISODate("2019-10-31T07:27:02.057Z"),
-	"end" : ISODate("2019-10-31T07:27:02.258Z"),
-	"totalTime" : 201,
-	"avgTime" : 1.005
+        "name" : "Real Time Dashboard",
+        "threads" : "qgy5wa",
+        "loop" : 200,
+        "opcount" : 1000,
+        "start" : ISODate("2019-10-31T07:27:02.057Z"),
+        "end" : ISODate("2019-10-31T07:27:02.258Z"),
+        "totalTime" : 201,
+        "avgTime" : 1.005
 }
 
 [qgy5wa] Real Time Dashboard loader final aggregate results
 {
-	"_id" : "Real Time Dashboard",
-	"totalLoop" : 1400,
-	"totalDBOps" : 7000,
-	"totalTime" : 212,
-	"avgTime" : 1.06
+        "_id" : "Real Time Dashboard",
+        "totalLoop" : 1400,
+        "totalDBOps" : 7000,
+        "totalTime" : 212,
+        "avgTime" : 1.06
 }
 ----
+
+|link:td.js[td.js]
+|TD
+|===
+
