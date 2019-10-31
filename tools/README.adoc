@@ -4,7 +4,7 @@ MongoDB Tools used to Sizing, Architectures, etc.
 
 [cols="2,5a"]
 |===
-|*Name* |*Document*
+|Name |Document
 
 |link:listCollStats.js[listCollStats.js]
 |List top X collections by size, storageSiz, count, etc
