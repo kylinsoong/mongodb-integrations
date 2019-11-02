@@ -1,0 +1,17 @@
+{
+	"_id" : "10000",
+	"name" : {
+		"first" : "Kylin",
+		"last" : "Soong"
+	},
+	"accountType" : "credit",
+        "balance": 10000,
+	"contact" : {
+		"phoneNumber" : 18611907049
+	},
+	"Address" : {
+		"city" : "Beijing",
+		"street" : "94th",
+		"zipecode" : 100006
+	}
+}
