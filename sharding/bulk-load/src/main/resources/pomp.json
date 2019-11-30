@@ -1,0 +1,19 @@
+{
+  "uuidKey" : {
+    "logTime" : "20190725121146",
+    "TxnID" : "ubas010031",
+    "name" : "BOCNET-G-BMSVR",
+    "indName" : "BOCNET-G-BMSVR_TERM_TXNID_TPS"
+  },
+  "value" : 2,
+  "warnCount" : 0,
+  "name" : "BOCNET-G-BMSVR",
+  "taskid" : "BOCNET-G-BMSVR_TERM_TXNID_TPS",
+  "reduceTime" : "20190725170834939",
+  "logTime" : "20190725121146",
+  "TxnID" : "ubas010031",
+  "topic" : "tps",
+  "offset" : NumberLong(100574295),
+  "partition" : 0,
+  "insertTime" : "20190725170900"
+}
